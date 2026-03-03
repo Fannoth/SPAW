@@ -60,6 +60,15 @@ export default config({
         }),
       },
     }),
+
+    privacyPolicy: singleton({
+      label: 'Polityka prywatności',
+      path: 'src/content/singletons/privacy',
+      format: { contentField: 'content' },
+      schema: {
+        content: fields.markdoc({ label: 'Treść' }),
+      },
+    }),
   },
 
   collections: {
@@ -154,6 +163,93 @@ export default config({
         phone: fields.text({ label: 'Telefon' }),
         message: fields.text({ label: 'Treść', multiline: true }),
         createdAt: fields.datetime({ label: 'Data zgłoszenia' }),
+      },
+    }),
+
+    testimonials: collection({
+      label: 'Opinie klientów',
+      slugField: 'name',
+      path: 'src/content/testimonials/*',
+      schema: {
+        name: fields.slug({ name: { label: 'Imię klienta' } }),
+        role: fields.text({ label: 'Kim jest (np. właściciel domu)' }),
+        content: fields.text({ label: 'Treść opinii', multiline: true }),
+        rating: fields.integer({ label: 'Ocena (1-5)', defaultValue: 5 }),
+        order: fields.integer({ label: 'Kolejność', defaultValue: 0 }),
+      },
+    }),
+
+    faq: collection({
+      label: 'FAQ',
+      slugField: 'question',
+      path: 'src/content/faq/*',
+      schema: {
+        question: fields.slug({ name: { label: 'Pytanie' } }),
+        answer: fields.text({ label: 'Odpowiedź', multiline: true }),
+        order: fields.integer({ label: 'Kolejność', defaultValue: 0 }),
+      },
+    }),
+
+    galleryImages: collection({
+      label: 'Galeria zdjęć',
+      slugField: 'caption',
+      path: 'src/content/gallery/*',
+      schema: {
+        caption: fields.slug({ name: { label: 'Opis' } }),
+        image: fields.image({
+          label: 'Zdjęcie',
+          directory: 'public/images/gallery',
+          publicPath: '/images/gallery/',
+        }),
+        category: fields.select({
+          label: 'Kategoria',
+          options: [
+            { label: 'Meble', value: 'meble' },
+            { label: 'Konstrukcje', value: 'konstrukcje' },
+            { label: 'Balustrady', value: 'balustrady' },
+            { label: 'Warsztat', value: 'warsztat' },
+            { label: 'Inne', value: 'inne' },
+          ],
+          defaultValue: 'inne',
+        }),
+        order: fields.integer({ label: 'Kolejność', defaultValue: 0 }),
+      },
+    }),
+
+    certificates: collection({
+      label: 'Certyfikaty',
+      slugField: 'title',
+      path: 'src/content/certificates/*',
+      schema: {
+        title: fields.slug({ name: { label: 'Nazwa certyfikatu' } }),
+        description: fields.text({ label: 'Opis' }),
+        image: fields.image({
+          label: 'Zdjęcie',
+          directory: 'public/images/certificates',
+          publicPath: '/images/certificates/',
+        }),
+        order: fields.integer({ label: 'Kolejność', defaultValue: 0 }),
+      },
+    }),
+
+    processSteps: collection({
+      label: 'Etapy realizacji',
+      slugField: 'title',
+      path: 'src/content/process/*',
+      schema: {
+        title: fields.slug({ name: { label: 'Nazwa etapu' } }),
+        description: fields.text({ label: 'Opis', multiline: true }),
+        stepNumber: fields.integer({ label: 'Numer kroku', defaultValue: 1 }),
+        icon: fields.select({
+          label: 'Ikona',
+          options: [
+            { label: 'Telefon', value: 'phone' },
+            { label: 'Kalkulator', value: 'calculator' },
+            { label: 'Narzędzia', value: 'tools' },
+            { label: 'Odbiór', value: 'check' },
+          ],
+          defaultValue: 'phone',
+        }),
       },
     }),
   },
