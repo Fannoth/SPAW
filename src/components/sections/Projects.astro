@@ -1,0 +1,36 @@
+---
+import ProjectCard from '../ProjectCard.astro'
+import ProjectFilter from '../ProjectFilter.astro'
+
+// Placeholder dane — docelowo z Keystatic
+const projects = [
+  { title: 'Stół industrialny', category: 'meble', mainImage: '', slug: 'stol-industrialny' },
+  { title: 'Regał loftowy', category: 'meble', mainImage: '', slug: 'regal-loftowy' },
+  { title: 'Balustrada schodowa', category: 'balustrady', mainImage: '', slug: 'balustrada-schodowa' },
+  { title: 'Pergola ogrodowa', category: 'konstrukcje', mainImage: '', slug: 'pergola-ogrodowa' },
+  { title: 'Stolik kawowy', category: 'meble', mainImage: '', slug: 'stolik-kawowy' },
+  { title: 'Ogrodzenie panelowe', category: 'balustrady', mainImage: '', slug: 'ogrodzenie-panelowe' },
+]
+---
+
+<section id="realizacje" class="py-20 bg-dark">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl sm:text-4xl font-bold uppercase tracking-wider mb-4 text-cream">Realizacje</h2>
+      <p class="text-metal max-w-2xl mx-auto">Nasze ostatnie projekty</p>
+    </div>
+
+    <ProjectFilter />
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {projects.map((project) => (
+        <ProjectCard
+          title={project.title}
+          category={project.category}
+          mainImage={project.mainImage}
+          slug={project.slug}
+        />
+      ))}
+    </div>
+  </div>
+</section>
