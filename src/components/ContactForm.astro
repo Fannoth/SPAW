@@ -58,16 +58,40 @@
 <script>
   const form = document.getElementById('contact-form') as HTMLFormElement
   const status = document.getElementById('form-status')
+  const submitBtn = form?.querySelector('button[type="submit"]') as HTMLButtonElement
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault()
-    // Docelowo: POST do API route
-    // Na razie: symulacja sukcesu
-    if (status) {
-      status.textContent = 'Dziękujemy! Wiadomość została wysłana.'
-      status.className = 'text-sm text-center text-green-600'
+    if (!status || !submitBtn) return
+
+    submitBtn.disabled = true
+    submitBtn.textContent = 'Wysyłanie...'
+    status.classList.add('hidden')
+
+    try {
+      const data = Object.fromEntries(new FormData(form))
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+
+      if (res.ok) {
+        status.textContent = 'Dziękujemy! Wiadomość została wysłana.'
+        status.className = 'text-sm text-center text-green-600'
+        form.reset()
+      } else {
+        const err = await res.json()
+        status.textContent = err.error || 'Wystąpił błąd. Spróbuj ponownie.'
+        status.className = 'text-sm text-center text-red-600'
+      }
+    } catch {
+      status.textContent = 'Błąd połączenia. Spróbuj ponownie.'
+      status.className = 'text-sm text-center text-red-600'
+    } finally {
       status.classList.remove('hidden')
+      submitBtn.disabled = false
+      submitBtn.textContent = 'Wyślij wiadomość'
     }
-    form.reset()
   })
 </script>
