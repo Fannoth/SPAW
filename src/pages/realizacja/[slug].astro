@@ -1,0 +1,64 @@
+---
+import Layout from '../../layouts/Layout.astro'
+
+// Placeholder — docelowo z Keystatic reader API
+export function getStaticPaths() {
+  const projects = [
+    { slug: 'stol-industrialny', title: 'Stół industrialny', category: 'meble', description: 'Stół industrialny z blatem dębowym i stalowymi nogami. Wymiary 180x90cm. Nogi z profilu 60x40mm, malowane proszkowo na czarno. Blat olejowany, naturalna krawędź.', mainImage: '', gallery: [] },
+    { slug: 'regal-loftowy', title: 'Regał loftowy', category: 'meble', description: 'Regał w stylu loft z profili stalowych 30x30mm. Pięć półek z drewna sosnowego. Wysokość 200cm, szerokość 120cm.', mainImage: '', gallery: [] },
+    { slug: 'balustrada-schodowa', title: 'Balustrada schodowa', category: 'balustrady', description: 'Balustrada schodowa ze stali nierdzewnej. Minimalistyczny design, szkło hartowane.', mainImage: '', gallery: [] },
+    { slug: 'pergola-ogrodowa', title: 'Pergola ogrodowa', category: 'konstrukcje', description: 'Pergola ogrodowa z profili stalowych 80x80mm. Malowana proszkowo, odporna na warunki atmosferyczne.', mainImage: '', gallery: [] },
+    { slug: 'stolik-kawowy', title: 'Stolik kawowy', category: 'meble', description: 'Stolik kawowy w stylu industrialnym. Blat z litego dębu, stalowa rama.', mainImage: '', gallery: [] },
+    { slug: 'ogrodzenie-panelowe', title: 'Ogrodzenie panelowe', category: 'balustrady', description: 'Ogrodzenie panelowe z profili stalowych. Nowoczesny design, montaż w cenie.', mainImage: '', gallery: [] },
+  ]
+  return projects.map((p) => ({
+    params: { slug: p.slug },
+    props: p,
+  }))
+}
+
+const { title, category, description, mainImage, gallery } = Astro.props
+---
+
+<Layout title={`${title} — StalLoft`}>
+  <div class="pt-24 pb-20">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Powrót -->
+      <a href="/#realizacje" class="inline-flex items-center gap-2 text-metal hover:text-primary transition-colors mb-8 text-sm uppercase tracking-wider">
+        &larr; Wróć do realizacji
+      </a>
+
+      <!-- Nagłówek -->
+      <h1 class="text-3xl sm:text-4xl font-bold uppercase tracking-wider mb-2">{title}</h1>
+      <span class="text-primary text-sm uppercase tracking-wider">{category}</span>
+
+      <!-- Zdjęcie główne -->
+      <div class="mt-8 aspect-video bg-metal/20 rounded-lg overflow-hidden flex items-center justify-center">
+        {mainImage ? (
+          <img src={mainImage} alt={title} class="w-full h-full object-cover" />
+        ) : (
+          <span class="text-metal">Zdjęcie główne</span>
+        )}
+      </div>
+
+      <!-- Opis -->
+      <div class="mt-8 prose prose-stone max-w-none">
+        <p>{description}</p>
+      </div>
+
+      <!-- Galeria -->
+      {gallery && gallery.length > 0 && (
+        <div class="mt-12">
+          <h2 class="text-2xl font-bold uppercase tracking-wider mb-6">Galeria</h2>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            {gallery.map((img: string) => (
+              <div class="aspect-square bg-metal/20 rounded-lg overflow-hidden">
+                <img src={img} alt="" class="w-full h-full object-cover" loading="lazy" />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  </div>
+</Layout>
