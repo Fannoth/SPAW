@@ -19,7 +19,7 @@ const paragraphs = content ? content.split('\n').filter((p: string) => p.trim())
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
       <!-- Tekst -->
-      <div>
+      <div class="animate-on-scroll">
         <h2 class="text-3xl sm:text-4xl font-bold uppercase tracking-wider mb-6 text-cream">{heading}</h2>
         <div class="space-y-4 text-cream/80 leading-relaxed">
           {paragraphs.map((p: string) => (
@@ -29,7 +29,7 @@ const paragraphs = content ? content.split('\n').filter((p: string) => p.trim())
       </div>
 
       <!-- Zdjęcie -->
-      <div class="aspect-[4/3] bg-metal/20 rounded-lg overflow-hidden flex items-center justify-center">
+      <div class="animate-on-scroll aspect-[4/3] bg-metal/20 rounded-lg overflow-hidden flex items-center justify-center">
         {image ? (
           <img src={image} alt={heading} class="w-full h-full object-cover" />
         ) : (

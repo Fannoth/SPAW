@@ -47,7 +47,7 @@ function formatPrice(item: typeof pricingItems[0]) {
 
     <div class="space-y-4">
       {pricingItems.map((item) => (
-        <div class="bg-cream border border-metal/20 rounded-lg p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div class="animate-on-scroll bg-cream border border-metal/20 rounded-lg p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h3 class="font-bold text-lg">{item.service}</h3>
             {item.notes && <p class="text-metal text-sm mt-1">{item.notes}</p>}
