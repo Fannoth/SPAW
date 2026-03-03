@@ -3,10 +3,12 @@ import react from '@astrojs/react'
 import markdoc from '@astrojs/markdoc'
 import tailwind from '@astrojs/tailwind'
 import keystatic from '@keystatic/astro'
-import node from '@astrojs/node'
+import vercel from '@astrojs/vercel'
+import sitemap from '@astrojs/sitemap'
 
 export default defineConfig({
-  integrations: [react(), markdoc(), tailwind(), keystatic()],
+  site: 'https://stalloft.pl',
+  integrations: [react(), markdoc(), tailwind(), keystatic(), sitemap()],
   output: 'static',
-  adapter: node({ mode: 'standalone' }),
+  adapter: vercel(),
 })
