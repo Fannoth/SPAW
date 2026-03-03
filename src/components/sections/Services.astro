@@ -1,0 +1,29 @@
+---
+import ServiceCard from '../ServiceCard.astro'
+
+// Placeholder dane — docelowo z Keystatic
+const services = [
+  { title: 'Meble loftowe', icon: 'furniture', shortDescription: 'Stoły, regały, szafki i inne meble w stylu industrialnym. Stal + drewno na zamówienie.' },
+  { title: 'Spawanie konstrukcji', icon: 'construction', shortDescription: 'Konstrukcje stalowe, pergole, wiaty. Spawanie MIG/MAG i TIG.' },
+  { title: 'Balustrady i ogrodzenia', icon: 'railing', shortDescription: 'Balustrady schodowe, balkonowe, ogrodzenia. Nowoczesne i klasyczne wzory.' },
+  { title: 'Naprawy spawalnicze', icon: 'repair', shortDescription: 'Naprawy elementów stalowych, spawanie serwisowe. Szybko i solidnie.' },
+]
+---
+
+<section id="uslugi" class="py-20 bg-light">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl sm:text-4xl font-bold uppercase tracking-wider mb-4">Usługi</h2>
+      <p class="text-metal max-w-2xl mx-auto">Co możemy dla Ciebie zrobić</p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {services.map((service) => (
+        <ServiceCard
+          title={service.title}
+          description={service.shortDescription}
+          icon={service.icon}
+        />
+      ))}
+    </div>
+  </div>
+</section>
