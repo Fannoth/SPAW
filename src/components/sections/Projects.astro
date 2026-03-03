@@ -1,9 +1,12 @@
 ---
+import { reader } from '../../utils/keystatic'
 import ProjectCard from '../ProjectCard.astro'
 import ProjectFilter from '../ProjectFilter.astro'
 
-// Placeholder dane — docelowo z Keystatic
-const projects = [
+const allProjects = await reader.collections.projects.all()
+
+// Fallback jeśli brak danych w CMS
+const fallbackProjects = [
   { title: 'Stół industrialny', category: 'meble', mainImage: '', slug: 'stol-industrialny' },
   { title: 'Regał loftowy', category: 'meble', mainImage: '', slug: 'regal-loftowy' },
   { title: 'Balustrada schodowa', category: 'balustrady', mainImage: '', slug: 'balustrada-schodowa' },
@@ -11,6 +14,15 @@ const projects = [
   { title: 'Stolik kawowy', category: 'meble', mainImage: '', slug: 'stolik-kawowy' },
   { title: 'Ogrodzenie panelowe', category: 'balustrady', mainImage: '', slug: 'ogrodzenie-panelowe' },
 ]
+
+const projects = allProjects.length > 0
+  ? allProjects.map((p) => ({
+      title: p.entry.title,
+      category: p.entry.category,
+      mainImage: p.entry.mainImage || '',
+      slug: p.slug,
+    }))
+  : fallbackProjects
 ---
 
 <section id="realizacje" class="py-20 bg-dark">

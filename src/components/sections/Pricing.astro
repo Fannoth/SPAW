@@ -1,12 +1,27 @@
 ---
-// Placeholder dane — docelowo z Keystatic
-const pricingItems = [
+import { reader } from '../../utils/keystatic'
+
+const allPricing = await reader.collections.pricing.all()
+const cmsItems = allPricing
+  .sort((a, b) => (a.entry.order ?? 0) - (b.entry.order ?? 0))
+  .map((p) => ({
+    service: p.entry.service,
+    priceFrom: p.entry.priceFrom ?? 0,
+    priceTo: p.entry.priceTo ?? 0,
+    unit: p.entry.unit,
+    notes: p.entry.notes || '',
+  }))
+
+// Fallback
+const fallbackItems = [
   { service: 'Stół loftowy', priceFrom: 1500, priceTo: 4000, unit: 'szt', notes: 'Zależnie od rozmiaru i materiału' },
   { service: 'Regał industrialny', priceFrom: 800, priceTo: 2500, unit: 'szt', notes: 'Różne konfiguracje półek' },
   { service: 'Balustrada schodowa', priceFrom: 350, priceTo: 600, unit: 'mb', notes: 'Stal + wykończenie' },
   { service: 'Ogrodzenie panelowe', priceFrom: 250, priceTo: 450, unit: 'mb', notes: 'Z montażem' },
   { service: 'Spawanie naprawcze', priceFrom: 100, priceTo: 0, unit: 'usluga', notes: 'Wycena indywidualna' },
 ]
+
+const pricingItems = cmsItems.length > 0 ? cmsItems : fallbackItems
 
 const unitLabels: Record<string, string> = {
   szt: 'szt.',

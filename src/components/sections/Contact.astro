@@ -1,5 +1,12 @@
 ---
+import { reader } from '../../utils/keystatic'
 import ContactForm from '../ContactForm.astro'
+
+const contact = await reader.singletons.contactInfo.read()
+const phone = contact?.phone || '+48 123 456 789'
+const email = contact?.email || 'kontakt@stalloft.pl'
+const address = contact?.address || 'ul. Stalowa 1, 00-000 Miasto'
+const googleMapsUrl = contact?.googleMapsUrl || ''
 ---
 
 <section id="kontakt" class="py-20 bg-light">
@@ -24,7 +31,7 @@ import ContactForm from '../ContactForm.astro'
             </svg>
             <div>
               <p class="font-semibold">Telefon</p>
-              <a href="tel:+48123456789" class="text-metal hover:text-primary transition-colors">+48 123 456 789</a>
+              <a href={`tel:${phone.replace(/\s/g, '')}`} class="text-metal hover:text-primary transition-colors">{phone}</a>
             </div>
           </div>
           <div class="flex items-start gap-4">
@@ -33,7 +40,7 @@ import ContactForm from '../ContactForm.astro'
             </svg>
             <div>
               <p class="font-semibold">Email</p>
-              <a href="mailto:kontakt@stalloft.pl" class="text-metal hover:text-primary transition-colors">kontakt@stalloft.pl</a>
+              <a href={`mailto:${email}`} class="text-metal hover:text-primary transition-colors">{email}</a>
             </div>
           </div>
           <div class="flex items-start gap-4">
@@ -43,14 +50,25 @@ import ContactForm from '../ContactForm.astro'
             </svg>
             <div>
               <p class="font-semibold">Adres</p>
-              <p class="text-metal">ul. Stalowa 1, 00-000 Miasto</p>
+              <p class="text-metal">{address}</p>
             </div>
           </div>
         </div>
 
-        <!-- Mapa placeholder -->
+        <!-- Mapa -->
         <div class="aspect-video bg-metal/20 rounded-lg overflow-hidden flex items-center justify-center">
-          <span class="text-metal text-sm">Google Maps embed</span>
+          {googleMapsUrl ? (
+            <iframe
+              src={googleMapsUrl}
+              class="w-full h-full"
+              style="border:0"
+              allowfullscreen=""
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+            ></iframe>
+          ) : (
+            <span class="text-metal text-sm">Google Maps embed</span>
+          )}
         </div>
       </div>
     </div>

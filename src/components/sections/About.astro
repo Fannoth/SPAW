@@ -1,5 +1,18 @@
 ---
-// src/components/sections/About.astro
+import { reader } from '../../utils/keystatic'
+
+const about = await reader.singletons.aboutSection.read()
+const heading = about?.heading || 'O firmie'
+const content = about?.content || ''
+const image = about?.image || ''
+
+const fallbackParagraphs = [
+  'Zajmujemy się profesjonalnym spawaniem i produkcją mebli w stylu loftowym. Łączymy solidne rzemiosło z nowoczesnym designem, tworząc unikalne produkty na zamówienie.',
+  'Specjalizujemy się w spawaniu MIG/MAG i TIG. Każdy projekt traktujemy indywidualnie — od konsultacji, przez projekt, po realizację i montaż.',
+  'Stawiamy na jakość materiałów, precyzję wykonania i terminowość. Nasi klienci wracają do nas, bo wiedzą, że mogą na nas polegać.',
+]
+
+const paragraphs = content ? content.split('\n').filter((p: string) => p.trim()) : fallbackParagraphs
 ---
 
 <section id="o-firmie" class="py-20 bg-dark">
@@ -7,27 +20,21 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
       <!-- Tekst -->
       <div>
-        <h2 class="text-3xl sm:text-4xl font-bold uppercase tracking-wider mb-6 text-cream">O firmie</h2>
+        <h2 class="text-3xl sm:text-4xl font-bold uppercase tracking-wider mb-6 text-cream">{heading}</h2>
         <div class="space-y-4 text-cream/80 leading-relaxed">
-          <p>
-            Zajmujemy się profesjonalnym spawaniem i produkcją mebli w stylu loftowym.
-            Łączymy solidne rzemiosło z nowoczesnym designem, tworząc unikalne produkty
-            na zamówienie.
-          </p>
-          <p>
-            Specjalizujemy się w spawaniu MIG/MAG i TIG. Każdy projekt traktujemy
-            indywidualnie — od konsultacji, przez projekt, po realizację i montaż.
-          </p>
-          <p>
-            Stawiamy na jakość materiałów, precyzję wykonania i terminowość.
-            Nasi klienci wracają do nas, bo wiedzą, że mogą na nas polegać.
-          </p>
+          {paragraphs.map((p: string) => (
+            <p>{p}</p>
+          ))}
         </div>
       </div>
 
-      <!-- Zdjęcie placeholder -->
+      <!-- Zdjęcie -->
       <div class="aspect-[4/3] bg-metal/20 rounded-lg overflow-hidden flex items-center justify-center">
-        <span class="text-metal text-sm">Zdjęcie warsztatu</span>
+        {image ? (
+          <img src={image} alt={heading} class="w-full h-full object-cover" />
+        ) : (
+          <span class="text-metal text-sm">Zdjęcie warsztatu</span>
+        )}
       </div>
     </div>
   </div>
