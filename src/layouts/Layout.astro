@@ -1,6 +1,7 @@
 ---
 import Header from '../components/Header.astro'
 import Footer from '../components/Footer.astro'
+import CookieConsent from '../components/CookieConsent.astro'
 import '../styles/global.css'
 
 interface Props {
@@ -60,6 +61,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site || 'https://stalloft
       <slot />
     </main>
     <Footer />
+    <CookieConsent />
     <script>
       import '../scripts/scroll-animations'
     </script>

@@ -1,10 +1,11 @@
 ---
 const currentYear = new Date().getFullYear()
 const navLinks = [
-  { label: 'Usługi', href: '#uslugi' },
-  { label: 'Realizacje', href: '#realizacje' },
-  { label: 'Cennik', href: '#cennik' },
-  { label: 'Kontakt', href: '#kontakt' },
+  { label: 'Usługi', href: '/#uslugi' },
+  { label: 'Realizacje', href: '/#realizacje' },
+  { label: 'Galeria', href: '/galeria' },
+  { label: 'Cennik', href: '/#cennik' },
+  { label: 'Kontakt', href: '/#kontakt' },
 ]
 ---
 
@@ -41,8 +42,9 @@ const navLinks = [
       </div>
     </div>
 
-    <div class="mt-12 pt-8 border-t border-metal/20 text-center text-sm">
+    <div class="mt-12 pt-8 border-t border-metal/20 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
       <p>&copy; {currentYear} StalLoft. Wszelkie prawa zastrzeżone.</p>
+      <a href="/polityka-prywatnosci" class="hover:text-primary transition-colors">Polityka prywatności</a>
     </div>
   </div>
 </footer>
