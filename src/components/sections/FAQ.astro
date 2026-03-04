@@ -1,0 +1,64 @@
+---
+import { reader } from '../../utils/keystatic'
+
+const allFaq = await reader.collections.faq.all()
+const cmsItems = allFaq
+  .sort((a, b) => (a.entry.order ?? 0) - (b.entry.order ?? 0))
+  .map((f) => ({
+    question: f.entry.question,
+    answer: f.entry.answer,
+  }))
+
+const fallbackItems = [
+  { question: 'Jakie materiały używacie?', answer: 'Pracujemy ze stalą konstrukcyjną, nierdzewną i aluminium. Do mebli łączymy stal z drewnem dębowym, jesionowym lub sosnowym.' },
+  { question: 'Ile trwa realizacja zamówienia?', answer: 'Standardowo 2-4 tygodnie, w zależności od stopnia skomplikowania projektu.' },
+  { question: 'Czy zapewniacie dostawę i montaż?', answer: 'Tak, oferujemy transport na terenie województwa oraz montaż na miejscu.' },
+  { question: 'Jak wygląda wycena?', answer: 'Wycena jest bezpłatna. Opisz czego potrzebujesz, a przygotujemy ofertę w 1-2 dni robocze.' },
+]
+
+const faqItems = cmsItems.length > 0 ? cmsItems : fallbackItems
+---
+
+<section id="faq" class="py-20 bg-dark">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl sm:text-4xl font-bold uppercase tracking-wider mb-4 text-cream">Najczęściej zadawane pytania</h2>
+      <p class="text-metal max-w-2xl mx-auto">Odpowiedzi na najważniejsze pytania</p>
+    </div>
+
+    <div class="space-y-3">
+      {faqItems.map((item, index) => (
+        <div class="animate-on-scroll faq-item border border-metal/30 rounded-lg overflow-hidden">
+          <button
+            class="faq-toggle w-full flex items-center justify-between px-6 py-4 text-left text-cream hover:text-primary transition-colors"
+            aria-expanded="false"
+            data-index={index}
+          >
+            <span class="font-semibold pr-4">{item.question}</span>
+            <svg class="faq-chevron w-5 h-5 shrink-0 transition-transform duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div class="faq-answer hidden px-6 pb-4">
+            <p class="text-cream/70 leading-relaxed">{item.answer}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll('.faq-toggle').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item')
+      const answer = item?.querySelector('.faq-answer')
+      const chevron = item?.querySelector('.faq-chevron')
+      const isOpen = btn.getAttribute('aria-expanded') === 'true'
+
+      btn.setAttribute('aria-expanded', String(!isOpen))
+      answer?.classList.toggle('hidden')
+      chevron?.classList.toggle('rotate-180')
+    })
+  })
+</script>
