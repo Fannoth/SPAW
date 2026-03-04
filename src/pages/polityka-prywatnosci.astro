@@ -1,0 +1,41 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { reader } from '../utils/keystatic'
+
+const privacy = await reader.singletons.privacyPolicy.read()
+
+const fallbackContent = `
+<h2>Administrator danych</h2>
+<p>Administratorem Twoich danych osobowych jest StalLoft z siedzibą przy ul. Stalowa 1, 00-000 Miasto.</p>
+
+<h2>Cele przetwarzania</h2>
+<p>Twoje dane osobowe przetwarzamy w celu odpowiedzi na zapytania przesłane przez formularz kontaktowy, realizacji zamówień i umów oraz wypełnienia obowiązków prawnych.</p>
+
+<h2>Pliki cookies</h2>
+<p>Strona używa plików cookies niezbędnych do prawidłowego działania strony oraz zapamiętania preferencji cookies. Możesz zarządzać cookies w ustawieniach przeglądarki.</p>
+
+<h2>Twoje prawa</h2>
+<p>Masz prawo do dostępu do swoich danych, sprostowania, usunięcia, ograniczenia przetwarzania, przenoszenia danych, wniesienia sprzeciwu oraz cofnięcia zgody w dowolnym momencie.</p>
+
+<h2>Kontakt</h2>
+<p>W sprawie danych osobowych: kontakt@stalloft.pl, +48 123 456 789.</p>
+`
+---
+
+<Layout title="Polityka prywatności — StalLoft">
+  <section class="pt-24 pb-20">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <a href="/" class="inline-flex items-center gap-2 text-metal hover:text-primary transition-colors mb-8 text-sm uppercase tracking-wider">
+        &larr; Wróć na stronę główną
+      </a>
+      <h1 class="text-3xl sm:text-4xl font-bold uppercase tracking-wider mb-8">Polityka prywatności</h1>
+      <div class="prose prose-stone max-w-none [&_h2]:text-xl [&_h2]:font-bold [&_h2]:uppercase [&_h2]:tracking-wider [&_h2]:mt-8 [&_h2]:mb-4 [&_p]:text-metal [&_p]:leading-relaxed [&_p]:mb-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:text-metal [&_ul]:space-y-1 [&_li]:text-metal">
+        {privacy?.content ? (
+          <Fragment set:html={privacy.content} />
+        ) : (
+          <Fragment set:html={fallbackContent} />
+        )}
+      </div>
+    </div>
+  </section>
+</Layout>
