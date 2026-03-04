@@ -1,21 +1,30 @@
 ---
-// src/components/ContactForm.astro
+const prefixes = [
+  { code: '+48', country: '🇵🇱 +48' },
+  { code: '+49', country: '🇩🇪 +49' },
+  { code: '+44', country: '🇬🇧 +44' },
+  { code: '+420', country: '🇨🇿 +420' },
+  { code: '+421', country: '🇸🇰 +421' },
+  { code: '+380', country: '🇺🇦 +380' },
+]
 ---
 
-<form id="contact-form" class="space-y-5">
+<form id="contact-form" class="space-y-5" novalidate>
   <div>
-    <label for="name" class="block text-sm font-semibold uppercase tracking-wider mb-2">Imię i nazwisko</label>
+    <label for="name" class="block text-sm font-semibold uppercase tracking-wider mb-2">Imię i nazwisko <span class="text-primary">*</span></label>
     <input
       type="text"
       id="name"
       name="name"
       required
+      minlength="2"
       class="w-full px-4 py-3 bg-cream border border-metal/30 rounded-lg focus:outline-none focus:border-primary transition-colors"
       placeholder="Jan Kowalski"
     />
+    <p class="field-error text-red-500 text-xs mt-1 hidden" data-for="name"></p>
   </div>
   <div>
-    <label for="email" class="block text-sm font-semibold uppercase tracking-wider mb-2">Email</label>
+    <label for="email" class="block text-sm font-semibold uppercase tracking-wider mb-2">Email <span class="text-primary">*</span></label>
     <input
       type="email"
       id="email"
@@ -24,31 +33,47 @@
       class="w-full px-4 py-3 bg-cream border border-metal/30 rounded-lg focus:outline-none focus:border-primary transition-colors"
       placeholder="jan@example.com"
     />
+    <p class="field-error text-red-500 text-xs mt-1 hidden" data-for="email"></p>
   </div>
   <div>
     <label for="phone" class="block text-sm font-semibold uppercase tracking-wider mb-2">Telefon</label>
-    <input
-      type="tel"
-      id="phone"
-      name="phone"
-      class="w-full px-4 py-3 bg-cream border border-metal/30 rounded-lg focus:outline-none focus:border-primary transition-colors"
-      placeholder="+48 123 456 789"
-    />
+    <div class="flex gap-2">
+      <select
+        id="phone-prefix"
+        name="phonePrefix"
+        class="w-28 px-3 py-3 bg-cream border border-metal/30 rounded-lg focus:outline-none focus:border-primary transition-colors text-sm"
+      >
+        {prefixes.map((p) => (
+          <option value={p.code} selected={p.code === '+48'}>{p.country}</option>
+        ))}
+      </select>
+      <input
+        type="tel"
+        id="phone"
+        name="phone"
+        class="flex-1 px-4 py-3 bg-cream border border-metal/30 rounded-lg focus:outline-none focus:border-primary transition-colors"
+        placeholder="123 456 789"
+        inputmode="numeric"
+      />
+    </div>
+    <p class="field-error text-red-500 text-xs mt-1 hidden" data-for="phone"></p>
   </div>
   <div>
-    <label for="message" class="block text-sm font-semibold uppercase tracking-wider mb-2">Wiadomość</label>
+    <label for="message" class="block text-sm font-semibold uppercase tracking-wider mb-2">Wiadomość <span class="text-primary">*</span></label>
     <textarea
       id="message"
       name="message"
       rows="5"
       required
+      minlength="10"
       class="w-full px-4 py-3 bg-cream border border-metal/30 rounded-lg focus:outline-none focus:border-primary transition-colors resize-none"
       placeholder="Opisz czego potrzebujesz..."
     ></textarea>
+    <p class="field-error text-red-500 text-xs mt-1 hidden" data-for="message"></p>
   </div>
   <button
     type="submit"
-    class="w-full px-8 py-3 bg-primary text-cream font-semibold uppercase tracking-wider text-sm rounded-lg hover:bg-primary/90 transition-colors"
+    class="w-full px-8 py-3 bg-primary text-cream font-semibold uppercase tracking-wider text-sm rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
   >
     Wyślij wiadomość
   </button>
@@ -60,16 +85,112 @@
   const status = document.getElementById('form-status')
   const submitBtn = form?.querySelector('button[type="submit"]') as HTMLButtonElement
 
+  function showError(fieldName: string, message: string) {
+    const errorEl = form?.querySelector(`[data-for="${fieldName}"]`) as HTMLElement
+    const input = form?.querySelector(`[name="${fieldName}"]`) as HTMLElement
+    if (errorEl) {
+      errorEl.textContent = message
+      errorEl.classList.remove('hidden')
+    }
+    input?.classList.add('border-red-500')
+  }
+
+  function clearErrors() {
+    form?.querySelectorAll('.field-error').forEach((el) => {
+      el.classList.add('hidden')
+      ;(el as HTMLElement).textContent = ''
+    })
+    form?.querySelectorAll('input, textarea').forEach((el) => {
+      el.classList.remove('border-red-500')
+    })
+  }
+
+  function validateEmail(email: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)
+  }
+
+  function validatePhone(phone: string): boolean {
+    if (!phone) return true // optional field
+    const digits = phone.replace(/[\s\-\(\)]/g, '')
+    return /^\d{7,15}$/.test(digits)
+  }
+
+  function validate(): boolean {
+    clearErrors()
+    let valid = true
+
+    const name = (form?.querySelector('[name="name"]') as HTMLInputElement)?.value.trim()
+    const email = (form?.querySelector('[name="email"]') as HTMLInputElement)?.value.trim()
+    const phone = (form?.querySelector('[name="phone"]') as HTMLInputElement)?.value.trim()
+    const message = (form?.querySelector('[name="message"]') as HTMLTextAreaElement)?.value.trim()
+
+    if (!name || name.length < 2) {
+      showError('name', 'Podaj imię i nazwisko (min. 2 znaki)')
+      valid = false
+    }
+
+    if (!email) {
+      showError('email', 'Podaj adres email')
+      valid = false
+    } else if (!validateEmail(email)) {
+      showError('email', 'Podaj poprawny adres email (np. jan@example.com)')
+      valid = false
+    }
+
+    if (phone && !validatePhone(phone)) {
+      showError('phone', 'Numer telefonu powinien zawierać tylko cyfry (7-15 znaków)')
+      valid = false
+    }
+
+    if (!message || message.length < 10) {
+      showError('message', 'Wiadomość musi mieć min. 10 znaków')
+      valid = false
+    }
+
+    return valid
+  }
+
+  // Real-time: remove error on input
+  form?.querySelectorAll('input, textarea').forEach((el) => {
+    el.addEventListener('input', () => {
+      el.classList.remove('border-red-500')
+      const name = el.getAttribute('name')
+      if (name) {
+        const errorEl = form?.querySelector(`[data-for="${name}"]`) as HTMLElement
+        errorEl?.classList.add('hidden')
+      }
+    })
+  })
+
+  // Allow only digits, spaces, dashes in phone
+  const phoneInput = form?.querySelector('[name="phone"]') as HTMLInputElement
+  phoneInput?.addEventListener('input', () => {
+    phoneInput.value = phoneInput.value.replace(/[^\d\s\-\(\)]/g, '')
+  })
+
   form?.addEventListener('submit', async (e) => {
     e.preventDefault()
     if (!status || !submitBtn) return
+
+    if (!validate()) return
 
     submitBtn.disabled = true
     submitBtn.textContent = 'Wysyłanie...'
     status.classList.add('hidden')
 
     try {
-      const data = Object.fromEntries(new FormData(form))
+      const formData = new FormData(form)
+      const prefix = formData.get('phonePrefix') as string
+      const phone = formData.get('phone') as string
+      const fullPhone = phone ? `${prefix} ${phone}` : ''
+
+      const data = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        phone: fullPhone,
+        message: formData.get('message'),
+      }
+
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -80,6 +201,7 @@
         status.textContent = 'Dziękujemy! Wiadomość została wysłana.'
         status.className = 'text-sm text-center text-green-600'
         form.reset()
+        clearErrors()
       } else {
         const err = await res.json()
         status.textContent = err.error || 'Wystąpił błąd. Spróbuj ponownie.'
