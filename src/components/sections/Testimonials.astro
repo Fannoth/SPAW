@@ -27,7 +27,7 @@ const testimonials = cmsItems.length > 0 ? cmsItems : fallbackItems
       <p class="text-metal max-w-2xl mx-auto">Co mówią o nas nasi klienci</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children">
       {testimonials.map((t) => (
         <div class="animate-on-scroll bg-cream border border-metal/20 rounded-lg p-6">
           <div class="flex gap-1 mb-4">

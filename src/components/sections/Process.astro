@@ -51,7 +51,7 @@ const iconPaths: Record<string, string> = {
       <p class="text-metal max-w-2xl mx-auto">Od pomysłu do realizacji w 4 krokach</p>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-20 stagger-children">
       {steps.map((step, i) => (
         <div class="animate-on-scroll text-center relative">
           {i < steps.length - 1 && (
