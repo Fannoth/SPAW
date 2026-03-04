@@ -1,0 +1,6 @@
+service: Brama wjazdowa
+priceFrom: 3000
+priceTo: 8000
+unit: szt
+notes: Z montażem, bez automatyki
+order: 5

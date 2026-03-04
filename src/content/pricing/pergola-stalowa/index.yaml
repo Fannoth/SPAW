@@ -1,0 +1,6 @@
+service: Pergola stalowa
+priceFrom: 5000
+priceTo: 15000
+unit: szt
+notes: Zależnie od wymiarów i wykończenia
+order: 4
