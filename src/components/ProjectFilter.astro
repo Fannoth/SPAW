@@ -11,7 +11,7 @@ const categories = [
 <div class="flex flex-wrap justify-center gap-3 mb-12">
   {categories.map((cat) => (
     <button
-      class="filter-btn px-5 py-2 text-sm uppercase tracking-wider border border-metal/30 rounded-full transition-all data-[active]:bg-primary data-[active]:border-primary data-[active]:text-cream hover:border-primary"
+      class="filter-btn px-5 py-2 text-sm uppercase tracking-wider border border-metal/30 rounded-full transition-all text-cream/70 hover:text-primary hover:border-primary data-[active]:bg-primary data-[active]:border-primary data-[active]:text-cream"
       data-filter={cat.value}
       data-active={cat.value === 'all' ? '' : undefined}
     >
