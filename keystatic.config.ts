@@ -1,7 +1,10 @@
 import { config, fields, collection, singleton } from '@keystatic/core'
 
 export default config({
-  storage: { kind: 'local' },
+  storage: {
+    kind: process.env.NODE_ENV === 'production' ? 'github' : 'local',
+    repo: 'Fannoth/SPAW',
+  },
 
   singletons: {
     heroSection: singleton({
