@@ -12,7 +12,7 @@ const services = defineCollection({
 })
 
 const projects = defineCollection({
-  loader: glob({ pattern: '**/*.mdoc', base: 'src/content/projects' }),
+  loader: glob({ pattern: '**/index.yaml', base: 'src/content/projects' }),
   schema: z.object({
     title: z.string(),
     category: z.string(),
