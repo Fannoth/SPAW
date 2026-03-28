@@ -1,0 +1,153 @@
+---
+const navLinks = [
+  { label: 'Usługi', href: '/#uslugi' },
+  { label: 'Realizacje', href: '/#realizacje' },
+  { label: 'Galeria', href: '/galeria' },
+  { label: 'Cennik', href: '/#cennik' },
+  { label: 'O firmie', href: '/#o-firmie' },
+  { label: 'Kontakt', href: '/#kontakt' },
+]
+---
+
+<header id="site-header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-transparent border-b border-transparent">
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+    <a href="/" class="text-cream font-bold text-xl tracking-wider uppercase">
+      StalLoft
+    </a>
+
+    <!-- Desktop nav -->
+    <ul class="hidden md:flex items-center gap-8">
+      {navLinks.map((link) => (
+        <li>
+          <a
+            href={link.href}
+            class="nav-link relative text-cream/80 hover:text-primary transition-colors text-sm uppercase tracking-widest"
+            data-section={link.href.replace('/#', '')}
+          >
+            {link.label}
+            <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300"></span>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <!-- Mobile hamburger -->
+    <button
+      id="menu-toggle"
+      class="md:hidden text-cream p-2 relative w-10 h-10 flex items-center justify-center"
+      aria-label="Otwórz menu"
+    >
+      <span class="hamburger-line absolute w-6 h-0.5 bg-cream transition-all duration-300 -translate-y-2"></span>
+      <span class="hamburger-line absolute w-6 h-0.5 bg-cream transition-all duration-300"></span>
+      <span class="hamburger-line absolute w-6 h-0.5 bg-cream transition-all duration-300 translate-y-2"></span>
+    </button>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="hidden md:hidden bg-dark/95 backdrop-blur-sm border-t border-metal/20">
+    <ul class="flex flex-col px-4 py-4 gap-4">
+      {navLinks.map((link) => (
+        <li>
+          <a
+            href={link.href}
+            class="mobile-nav-link nav-link block text-cream/80 hover:text-primary transition-colors text-sm uppercase tracking-widest"
+            data-section={link.href.replace('/#', '')}
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</header>
+
+<script>
+  const header = document.getElementById('site-header')
+  const toggle = document.getElementById('menu-toggle')
+  const menu = document.getElementById('mobile-menu')
+  const hamburgerLines = toggle?.querySelectorAll('.hamburger-line')
+  let menuOpen = false
+
+  // Scroll: transparent → solid
+  function updateHeader() {
+    if (!header) return
+    if (window.scrollY > 80) {
+      header.classList.remove('bg-transparent', 'border-transparent')
+      header.classList.add('bg-dark/95', 'backdrop-blur-sm', 'border-metal/20')
+    } else {
+      header.classList.remove('bg-dark/95', 'backdrop-blur-sm', 'border-metal/20')
+      header.classList.add('bg-transparent', 'border-transparent')
+    }
+  }
+
+  window.addEventListener('scroll', updateHeader, { passive: true })
+  updateHeader()
+
+  // Mobile menu toggle with hamburger animation
+  toggle?.addEventListener('click', () => {
+    menuOpen = !menuOpen
+    menu?.classList.toggle('hidden')
+
+    if (hamburgerLines && hamburgerLines.length === 3) {
+      if (menuOpen) {
+        hamburgerLines[0].classList.remove('-translate-y-2')
+        hamburgerLines[0].classList.add('rotate-45', 'translate-y-0')
+        hamburgerLines[1].classList.add('opacity-0', 'scale-0')
+        hamburgerLines[2].classList.remove('translate-y-2')
+        hamburgerLines[2].classList.add('-rotate-45', 'translate-y-0')
+      } else {
+        hamburgerLines[0].classList.add('-translate-y-2')
+        hamburgerLines[0].classList.remove('rotate-45', 'translate-y-0')
+        hamburgerLines[1].classList.remove('opacity-0', 'scale-0')
+        hamburgerLines[2].classList.add('translate-y-2')
+        hamburgerLines[2].classList.remove('-rotate-45', 'translate-y-0')
+      }
+    }
+  })
+
+  document.querySelectorAll('.mobile-nav-link').forEach((link) => {
+    link.addEventListener('click', () => {
+      menu?.classList.add('hidden')
+      menuOpen = false
+      if (hamburgerLines && hamburgerLines.length === 3) {
+        hamburgerLines[0].classList.add('-translate-y-2')
+        hamburgerLines[0].classList.remove('rotate-45', 'translate-y-0')
+        hamburgerLines[1].classList.remove('opacity-0', 'scale-0')
+        hamburgerLines[2].classList.add('translate-y-2')
+        hamburgerLines[2].classList.remove('-rotate-45', 'translate-y-0')
+      }
+    })
+  })
+
+  // Active nav link based on scroll position
+  const sections = document.querySelectorAll('section[id]')
+  const navLinksEls = document.querySelectorAll('.nav-link')
+
+  const sectionObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id
+          navLinksEls.forEach((link) => {
+            const section = link.getAttribute('data-section')
+            const underline = link.querySelector('span')
+            if (section === id) {
+              link.classList.add('text-primary')
+              link.classList.remove('text-cream/80')
+              underline?.classList.add('w-full')
+              underline?.classList.remove('w-0')
+            } else {
+              link.classList.remove('text-primary')
+              link.classList.add('text-cream/80')
+              underline?.classList.remove('w-full')
+              underline?.classList.add('w-0')
+            }
+          })
+        }
+      })
+    },
+    { threshold: 0.3, rootMargin: '-80px 0px -50% 0px' }
+  )
+
+  sections.forEach((section) => sectionObserver.observe(section))
+</script>

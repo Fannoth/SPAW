@@ -1,0 +1,68 @@
+---
+import { reader } from '../utils/keystatic'
+
+const contact = await reader.singletons.contactInfo.read()
+const phone = contact?.phone || '+48 123 456 789'
+const phoneClean = phone.replace(/\s/g, '')
+---
+
+<div class="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-3">
+  <!-- Scroll to top -->
+  <button
+    id="scroll-top"
+    class="opacity-0 translate-y-4 transition-all duration-300 w-12 h-12 rounded-full bg-metal/80 hover:bg-metal text-cream flex items-center justify-center shadow-lg backdrop-blur-sm"
+    aria-label="Wróć na górę"
+  >
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
+    </svg>
+  </button>
+
+  <!-- Phone button -->
+  <a
+    href={`tel:${phoneClean}`}
+    class="group relative w-14 h-14 rounded-full bg-primary hover:bg-primary/90 text-cream flex items-center justify-center shadow-lg shadow-primary/30 transition-all hover:scale-110"
+    aria-label="Zadzwoń"
+  >
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+    </svg>
+    <!-- Tooltip -->
+    <span class="absolute right-16 top-1/2 -translate-y-1/2 whitespace-nowrap bg-dark text-cream text-sm px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg">
+      {phone}
+    </span>
+  </a>
+</div>
+
+<script>
+  const scrollBtn = document.getElementById('scroll-top')
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 400) {
+      scrollBtn?.classList.remove('opacity-0', 'translate-y-4')
+      scrollBtn?.classList.add('opacity-100', 'translate-y-0')
+    } else {
+      scrollBtn?.classList.remove('opacity-100', 'translate-y-0')
+      scrollBtn?.classList.add('opacity-0', 'translate-y-4')
+    }
+  }, { passive: true })
+
+  function easeInOutCubic(t: number): number {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+  }
+
+  scrollBtn?.addEventListener('click', () => {
+    const startY = window.scrollY
+    const duration = 900
+    const start = performance.now()
+
+    function step(now: number) {
+      const elapsed = now - start
+      const progress = Math.min(elapsed / duration, 1)
+      window.scrollTo(0, startY * (1 - easeInOutCubic(progress)))
+      if (progress < 1) requestAnimationFrame(step)
+    }
+
+    requestAnimationFrame(step)
+  })
+</script>

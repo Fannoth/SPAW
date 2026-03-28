@@ -1,0 +1,44 @@
+---
+const categories = [
+  { label: 'Wszystkie', value: 'all' },
+  { label: 'Meble', value: 'meble' },
+  { label: 'Konstrukcje', value: 'konstrukcje' },
+  { label: 'Balustrady', value: 'balustrady' },
+  { label: 'Inne', value: 'inne' },
+]
+---
+
+<div class="flex flex-wrap justify-center gap-3 mb-12">
+  {categories.map((cat) => (
+    <button
+      class="filter-btn px-5 py-2 text-sm uppercase tracking-wider border border-metal/30 rounded-full transition-all text-cream/70 hover:text-primary hover:border-primary data-[active]:bg-primary data-[active]:border-primary data-[active]:text-cream"
+      data-filter={cat.value}
+      data-active={cat.value === 'all' ? '' : undefined}
+    >
+      {cat.label}
+    </button>
+  ))}
+</div>
+
+<script>
+  const buttons = document.querySelectorAll('.filter-btn')
+  const cards = document.querySelectorAll('[data-category]')
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const filter = btn.getAttribute('data-filter')
+
+      buttons.forEach((b) => b.removeAttribute('data-active'))
+      btn.setAttribute('data-active', '')
+
+      cards.forEach((card) => {
+        const el = card as HTMLElement
+        if (filter === 'all' || card.getAttribute('data-category') === filter) {
+          el.style.display = ''
+        } else {
+          el.style.display = 'none'
+        }
+      })
+    })
+  })
+</script>

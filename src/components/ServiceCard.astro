@@ -1,0 +1,19 @@
+---
+import ServiceIcon from './icons/ServiceIcon.astro'
+
+interface Props {
+  title: string
+  description: string
+  icon: string
+}
+
+const { title, description, icon } = Astro.props
+---
+
+<div class="animate-on-scroll bg-cream border border-metal/20 rounded-lg p-6 hover:border-primary/50 hover:shadow-lg transition-all duration-300">
+  <div class="text-primary mb-4">
+    <ServiceIcon icon={icon} />
+  </div>
+  <h3 class="text-lg font-bold uppercase tracking-wider mb-3">{title}</h3>
+  <p class="text-metal text-sm leading-relaxed">{description}</p>
+</div>

@@ -1,0 +1,58 @@
+---
+import Layout from '../../layouts/Layout.astro'
+import { reader } from '../../utils/keystatic'
+
+export async function getStaticPaths() {
+  const projects = await reader.collections.projects.all()
+  return projects.map((p) => ({
+    params: { slug: p.slug },
+    props: {
+      title: p.entry.title,
+      category: p.entry.category,
+      mainImage: p.entry.mainImage || '',
+      gallery: p.entry.gallery || [],
+      slug: p.slug,
+    },
+  }))
+}
+
+const { title, category, mainImage, gallery } = Astro.props
+---
+
+<Layout title={`${title} — StalLoft`}>
+  <div class="pt-24 pb-20">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Powrót -->
+      <a href="/#realizacje" class="inline-flex items-center gap-2 text-metal hover:text-primary transition-colors mb-8 text-sm uppercase tracking-wider">
+        &larr; Wróć do realizacji
+      </a>
+
+      <!-- Nagłówek -->
+      <h1 class="text-3xl sm:text-4xl font-bold uppercase tracking-wider mb-2">{title}</h1>
+      <span class="text-primary text-sm uppercase tracking-wider">{category}</span>
+
+      <!-- Zdjęcie główne -->
+      <div class="mt-8 aspect-video bg-metal/20 rounded-lg overflow-hidden flex items-center justify-center">
+        {mainImage ? (
+          <img src={mainImage} alt={title} class="w-full h-full object-cover" />
+        ) : (
+          <span class="text-metal">Zdjęcie główne</span>
+        )}
+      </div>
+
+      <!-- Galeria -->
+      {gallery && gallery.length > 0 && (
+        <div class="mt-12">
+          <h2 class="text-2xl font-bold uppercase tracking-wider mb-6">Galeria</h2>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            {gallery.map((img: string) => (
+              <div class="aspect-square bg-metal/20 rounded-lg overflow-hidden">
+                <img src={img} alt="" class="w-full h-full object-cover" loading="lazy" />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  </div>
+</Layout>

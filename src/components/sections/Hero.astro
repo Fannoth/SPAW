@@ -1,0 +1,94 @@
+---
+import { reader } from '../../utils/keystatic'
+
+const hero = await reader.singletons.heroSection.read()
+const title = hero?.title || 'StalLoft'
+const subtitle = hero?.subtitle || 'Meble loftowe & usługi spawalnicze'
+const ctaPrimary = hero?.ctaPrimary || 'Zobacz realizacje'
+const ctaSecondary = hero?.ctaSecondary || 'Skontaktuj się'
+const bgImage = hero?.backgroundImage || ''
+---
+
+<section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden">
+  <!-- Tło z parallax -->
+  <div id="hero-bg" class="absolute inset-0 will-change-transform" style="transform: translateY(0)">
+    {bgImage ? (
+      <img src={bgImage} alt="" class="w-full h-full object-cover scale-110" />
+    ) : (
+      <div class="w-full h-full bg-gradient-to-br from-dark via-stone-900 to-dark"></div>
+    )}
+    <div class="absolute inset-0 bg-dark/60"></div>
+  </div>
+
+  <div class="relative z-10 text-center px-4 max-w-4xl mx-auto">
+    <h1 class="text-4xl sm:text-5xl lg:text-7xl font-bold text-cream uppercase tracking-wider mb-6 opacity-0 animate-[fadeSlideUp_0.8s_ease_0.2s_forwards]">
+      {title}
+    </h1>
+    <p
+      id="hero-subtitle"
+      class="text-lg sm:text-xl lg:text-2xl text-cream/80 mb-10 min-h-[2em]"
+      data-text={subtitle}
+    >
+      &nbsp;
+    </p>
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 opacity-0 animate-[fadeSlideUp_0.8s_ease_1.5s_forwards]">
+      <a
+        href="#realizacje"
+        class="px-8 py-3 bg-primary text-cream font-semibold uppercase tracking-wider text-sm rounded hover:bg-primary/90 transition-colors"
+      >
+        {ctaPrimary}
+      </a>
+      <a
+        href="#kontakt"
+        class="px-8 py-3 border-2 border-cream/50 text-cream font-semibold uppercase tracking-wider text-sm rounded hover:border-primary hover:text-primary transition-colors"
+      >
+        {ctaSecondary}
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  @keyframes fadeSlideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<script>
+  // Typing effect
+  const subtitleEl = document.getElementById('hero-subtitle')
+  if (subtitleEl) {
+    const text = subtitleEl.dataset.text || ''
+    let i = 0
+    subtitleEl.textContent = ''
+
+    setTimeout(() => {
+      function type() {
+        if (i < text.length) {
+          subtitleEl.textContent += text.charAt(i)
+          i++
+          setTimeout(type, 40 + Math.random() * 30)
+        }
+      }
+      type()
+    }, 800)
+  }
+
+  // Parallax
+  const heroBg = document.getElementById('hero-bg')
+  if (heroBg) {
+    window.addEventListener('scroll', () => {
+      const scrollY = window.scrollY
+      if (scrollY < window.innerHeight) {
+        heroBg.style.transform = `translateY(${scrollY * 0.3}px)`
+      }
+    }, { passive: true })
+  }
+</script>

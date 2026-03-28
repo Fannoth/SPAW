@@ -1,0 +1,6 @@
+service: Stół loftowy
+priceFrom: 1500
+priceTo: 4000
+unit: szt
+notes: Zależnie od rozmiaru i materiału
+order: 1

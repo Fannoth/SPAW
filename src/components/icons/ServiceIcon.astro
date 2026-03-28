@@ -1,0 +1,20 @@
+---
+interface Props {
+  icon: string
+  class?: string
+}
+
+const { icon, class: className = 'w-12 h-12' } = Astro.props
+
+const icons: Record<string, string> = {
+  furniture: 'M4 6h16M4 10h16M6 14h12v4H6z',
+  welding: 'M13 10V3L4 14h7v7l9-11h-7z',
+  railing: 'M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6',
+  repair: 'M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z',
+  construction: 'M2 20h20M6 20V8l6-4 6 4v12M10 20v-4h4v4',
+}
+---
+
+<svg class={className} fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" d={icons[icon] || icons.welding} />
+</svg>

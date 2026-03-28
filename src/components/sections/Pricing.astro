@@ -1,0 +1,66 @@
+---
+import { reader } from '../../utils/keystatic'
+
+const allPricing = await reader.collections.pricing.all()
+const cmsItems = allPricing
+  .sort((a, b) => (a.entry.order ?? 0) - (b.entry.order ?? 0))
+  .map((p) => ({
+    service: p.entry.service,
+    priceFrom: p.entry.priceFrom ?? 0,
+    priceTo: p.entry.priceTo ?? 0,
+    unit: p.entry.unit,
+    notes: p.entry.notes || '',
+  }))
+
+// Fallback
+const fallbackItems = [
+  { service: 'Stół loftowy', priceFrom: 1500, priceTo: 4000, unit: 'szt', notes: 'Zależnie od rozmiaru i materiału' },
+  { service: 'Regał industrialny', priceFrom: 800, priceTo: 2500, unit: 'szt', notes: 'Różne konfiguracje półek' },
+  { service: 'Balustrada schodowa', priceFrom: 350, priceTo: 600, unit: 'mb', notes: 'Stal + wykończenie' },
+  { service: 'Ogrodzenie panelowe', priceFrom: 250, priceTo: 450, unit: 'mb', notes: 'Z montażem' },
+  { service: 'Spawanie naprawcze', priceFrom: 100, priceTo: 0, unit: 'usluga', notes: 'Wycena indywidualna' },
+]
+
+const pricingItems = cmsItems.length > 0 ? cmsItems : fallbackItems
+
+const unitLabels: Record<string, string> = {
+  szt: 'szt.',
+  mb: 'mb.',
+  m2: 'm²',
+  usluga: 'usługa',
+}
+
+function formatPrice(item: typeof pricingItems[0]) {
+  if (item.priceTo && item.priceTo > item.priceFrom) {
+    return `${item.priceFrom} – ${item.priceTo} zł / ${unitLabels[item.unit]}`
+  }
+  return `od ${item.priceFrom} zł / ${unitLabels[item.unit]}`
+}
+---
+
+<section id="cennik" class="py-20 bg-light">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl sm:text-4xl font-bold uppercase tracking-wider mb-4">Cennik</h2>
+      <p class="text-metal max-w-2xl mx-auto">Orientacyjne ceny naszych usług</p>
+    </div>
+
+    <div class="space-y-4">
+      {pricingItems.map((item) => (
+        <div class="animate-on-scroll bg-cream border border-metal/20 rounded-lg p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h3 class="font-bold text-lg">{item.service}</h3>
+            {item.notes && <p class="text-metal text-sm mt-1">{item.notes}</p>}
+          </div>
+          <div class="text-primary font-bold text-lg whitespace-nowrap">
+            {formatPrice(item)}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <p class="text-center text-metal text-sm mt-8">
+      * Ceny orientacyjne. Ostateczna wycena po indywidualnej konsultacji.
+    </p>
+  </div>
+</section>

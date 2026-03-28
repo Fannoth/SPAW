@@ -1,0 +1,73 @@
+---
+import Header from '../components/Header.astro'
+import Footer from '../components/Footer.astro'
+import CookieConsent from '../components/CookieConsent.astro'
+import FloatingContact from '../components/FloatingContact.astro'
+import '../styles/global.css'
+
+interface Props {
+  title: string
+  description?: string
+  ogImage?: string
+}
+
+const { title, description = 'StalLoft — profesjonalne meble loftowe i usługi spawalnicze. Spawanie MIG/MAG, TIG. Balustrady, konstrukcje stalowe, meble industrialne na zamówienie.', ogImage } = Astro.props
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site || 'https://stalloft.pl')
+---
+
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl.href} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl.href} />
+    <meta property="og:locale" content="pl_PL" />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+
+    <title>{title}</title>
+
+    <!-- Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "StalLoft",
+      "description": "Meble loftowe & profesjonalne usługi spawalnicze",
+      "telephone": "+48123456789",
+      "email": "kontakt@stalloft.pl",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "ul. Stalowa 1",
+        "addressLocality": "Miasto",
+        "addressCountry": "PL"
+      },
+      "serviceType": ["Meble loftowe", "Spawanie konstrukcji", "Balustrady", "Naprawy spawalnicze"]
+    })} />
+  </head>
+  <body class="bg-light text-dark font-sans">
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+    <FloatingContact />
+    <CookieConsent />
+    <script>
+      import '../scripts/scroll-animations'
+      import '../scripts/smooth-scroll'
+    </script>
+  </body>
+</html>

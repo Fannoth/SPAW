@@ -1,0 +1,168 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { reader } from '../utils/keystatic'
+
+const allProjects = await reader.collections.projects.all()
+const allGallery = await reader.collections.galleryImages.all()
+
+const projectImages = allProjects.flatMap((p) => {
+  const images: { src: string; caption: string; category: string }[] = []
+  if (p.entry.mainImage) {
+    images.push({ src: p.entry.mainImage, caption: p.entry.title, category: p.entry.category })
+  }
+  if (p.entry.gallery) {
+    p.entry.gallery.forEach((img: string) => {
+      if (img) images.push({ src: img, caption: p.entry.title, category: p.entry.category })
+    })
+  }
+  return images
+})
+
+const galleryImages = allGallery
+  .sort((a, b) => (a.entry.order ?? 0) - (b.entry.order ?? 0))
+  .filter((g) => g.entry.image)
+  .map((g) => ({
+    src: g.entry.image!,
+    caption: g.entry.caption,
+    category: g.entry.category,
+  }))
+
+const allImages = [...galleryImages, ...projectImages]
+
+const fallbackImages = [
+  { src: '', caption: 'Stół industrialny', category: 'meble' },
+  { src: '', caption: 'Regał loftowy', category: 'meble' },
+  { src: '', caption: 'Balustrada schodowa', category: 'balustrady' },
+  { src: '', caption: 'Pergola ogrodowa', category: 'konstrukcje' },
+  { src: '', caption: 'Stolik kawowy', category: 'meble' },
+  { src: '', caption: 'Ogrodzenie panelowe', category: 'balustrady' },
+]
+
+const images = allImages.length > 0 ? allImages : fallbackImages
+const categories = ['wszystkie', ...new Set(images.map((img) => img.category))]
+---
+
+<Layout title="Galeria — StalLoft" description="Galeria realizacji StalLoft — meble loftowe, balustrady, konstrukcje stalowe.">
+  <section class="pt-24 pb-20 bg-dark min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h1 class="text-3xl sm:text-4xl font-bold uppercase tracking-wider text-cream mb-4">Galeria</h1>
+        <p class="text-metal max-w-2xl mx-auto">Przegląd naszych realizacji</p>
+      </div>
+
+      <div class="flex flex-wrap justify-center gap-3 mb-12">
+        {categories.map((cat) => (
+          <button
+            class="gallery-filter px-4 py-2 text-sm uppercase tracking-wider rounded-full border border-metal/30 text-cream/70 hover:border-primary hover:text-primary transition-colors data-[active]:bg-primary data-[active]:text-cream data-[active]:border-primary"
+            data-category={cat}
+          >
+            {cat === 'wszystkie' ? 'Wszystkie' : cat.charAt(0).toUpperCase() + cat.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      <div class="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
+        {images.map((img, i) => (
+          <div
+            class="gallery-item break-inside-avoid overflow-hidden rounded-lg cursor-pointer group"
+            data-category={img.category}
+            data-index={i}
+          >
+            <div class="relative bg-metal/20 aspect-[4/3]">
+              {img.src ? (
+                <img src={img.src} alt={img.caption} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+              ) : (
+                <div class="w-full h-full flex items-center justify-center text-metal text-sm">{img.caption}</div>
+              )}
+              <div class="absolute inset-0 bg-dark/0 group-hover:bg-dark/40 transition-colors duration-300 flex items-end">
+                <p class="p-3 text-cream text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">{img.caption}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <div id="lightbox" class="fixed inset-0 z-50 hidden bg-dark/95 flex items-center justify-center">
+    <button id="lightbox-close" class="absolute top-4 right-4 text-cream/70 hover:text-cream text-3xl">&times;</button>
+    <button id="lightbox-prev" class="absolute left-4 text-cream/70 hover:text-cream text-3xl">&larr;</button>
+    <button id="lightbox-next" class="absolute right-4 text-cream/70 hover:text-cream text-3xl">&rarr;</button>
+    <div class="max-w-4xl max-h-[80vh] mx-auto px-16">
+      <img id="lightbox-img" src="" alt="" class="max-w-full max-h-[80vh] object-contain" />
+      <p id="lightbox-caption" class="text-cream/70 text-center mt-4 text-sm"></p>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  const filterBtns = document.querySelectorAll('.gallery-filter')
+  const galleryItems = document.querySelectorAll('.gallery-item')
+
+  filterBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const cat = btn.getAttribute('data-category')
+      filterBtns.forEach((b) => b.removeAttribute('data-active'))
+      btn.setAttribute('data-active', '')
+
+      galleryItems.forEach((item) => {
+        const itemCat = item.getAttribute('data-category')
+        if (cat === 'wszystkie' || itemCat === cat) {
+          ;(item as HTMLElement).style.display = ''
+        } else {
+          ;(item as HTMLElement).style.display = 'none'
+        }
+      })
+    })
+  })
+  filterBtns[0]?.setAttribute('data-active', '')
+
+  const lightbox = document.getElementById('lightbox')
+  const lbImg = document.getElementById('lightbox-img') as HTMLImageElement
+  const lbCaption = document.getElementById('lightbox-caption')
+  let currentIndex = 0
+
+  const imageData: { src: string; caption: string }[] = []
+  galleryItems.forEach((item) => {
+    const img = item.querySelector('img')
+    const caption = item.querySelector('p')?.textContent || ''
+    if (img) {
+      imageData.push({ src: img.src, caption })
+    }
+  })
+
+  function showImage(index: number) {
+    if (index < 0 || index >= imageData.length) return
+    currentIndex = index
+    lbImg.src = imageData[index].src
+    lbImg.alt = imageData[index].caption
+    if (lbCaption) lbCaption.textContent = imageData[index].caption
+  }
+
+  galleryItems.forEach((item) => {
+    const img = item.querySelector('img')
+    if (!img) return
+    item.addEventListener('click', () => {
+      const src = img.src
+      const idx = imageData.findIndex((d) => d.src === src)
+      if (idx === -1) return
+      showImage(idx)
+      lightbox?.classList.remove('hidden')
+    })
+  })
+
+  document.getElementById('lightbox-close')?.addEventListener('click', () => lightbox?.classList.add('hidden'))
+  document.getElementById('lightbox-prev')?.addEventListener('click', () => showImage(currentIndex - 1))
+  document.getElementById('lightbox-next')?.addEventListener('click', () => showImage(currentIndex + 1))
+
+  lightbox?.addEventListener('click', (e) => {
+    if (e.target === lightbox) lightbox.classList.add('hidden')
+  })
+
+  document.addEventListener('keydown', (e) => {
+    if (lightbox?.classList.contains('hidden')) return
+    if (e.key === 'Escape') lightbox.classList.add('hidden')
+    if (e.key === 'ArrowLeft') showImage(currentIndex - 1)
+    if (e.key === 'ArrowRight') showImage(currentIndex + 1)
+  })
+</script>
