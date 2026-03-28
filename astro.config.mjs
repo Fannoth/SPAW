@@ -7,7 +7,7 @@ import vercel from '@astrojs/vercel'
 import sitemap from '@astrojs/sitemap'
 
 export default defineConfig({
-  site: 'https://stalloft.pl',
+  site: 'https://spaw.vercel.app',
   integrations: [react(), markdoc(), tailwind(), keystatic(), sitemap()],
   output: 'static',
   adapter: vercel(),
