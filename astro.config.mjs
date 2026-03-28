@@ -11,4 +11,11 @@ export default defineConfig({
   integrations: [react(), markdoc(), tailwind(), keystatic(), sitemap()],
   output: 'static',
   adapter: vercel(),
+  security: {
+    checkOrigin: true,
+    allowedDomains: [
+      { hostname: 'spaw.vercel.app', protocol: 'https' },
+      { hostname: '*.vercel.app', protocol: 'https' },
+    ],
+  },
 })
